@@ -1,0 +1,15 @@
+<div class="popup">
+  <h2>Select Template</h2>
+  <div class="template-list">
+    <div *ngFor="let template of templates" class="template-item">
+      <!-- Updated img tag below -->
+      <img [src]="'http://localhost:8084/certificates/file/' + template.id" alt="{{ template.name }}">
+      <h3>{{ template.name }}</h3>
+      <p>{{template.templatePath}}</p>
+      <button class="delete" (click)="deleteTemplate(template.id)">Delete</button>
+      <button class="select" (click)="selectTemplate(template)">Select</button>
+      <button class="preview" (click)="previewTemplate(template)">Preview</button>
+    </div>
+  </div>
+  <button class="close" (click)="closePopup.emit()">Close</button>
+</div>
