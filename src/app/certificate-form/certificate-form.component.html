@@ -1,0 +1,31 @@
+<div class="container">
+    <div class="card">
+      <div class="header">
+        <h2 class="title">Add New Certificate</h2>
+        <p class="subtitle">Enter the certificate details and upload the file.</p>
+      </div>
+      <form class="form" [formGroup]="certificateForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="name" class="label">Certificate Name</label>
+          <input
+            id="name"
+            type="text"
+            placeholder="Enter certificate name"
+            class="input"
+            formControlName="name"
+          />
+        </div>
+        <div class="form-group">
+          <label for="file" class="label">Upload File</label>
+          <input
+            id="file"
+            type="file"
+            class="input"
+            (change)="onFileSelected($event)"
+          />
+        </div>
+        <button class="button">Add Certificate</button>
+      </form>
+    </div>
+  </div>
+  
