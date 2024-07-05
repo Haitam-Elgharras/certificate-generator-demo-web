@@ -6,5 +6,5 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./certificate-template1.component.css']
 })
 export class CertificateComponent {
-  @Input() candidateName: string = '';
+  @Input() candidateName: string | undefined;
 }

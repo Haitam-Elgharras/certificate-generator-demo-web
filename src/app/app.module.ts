@@ -11,6 +11,7 @@ import { CertificateFormComponent } from './certificate-form/certificate-form.co
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PdfToImageComponent } from './pdf-to-image/pdf-to-image.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { XIconComponent } from './components/x-icon/x-icon.component';
 
 @NgModule({
   declarations: [
@@ -20,13 +21,14 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
     CertificateComponent,
     CertificateFormComponent,
     PdfToImageComponent,
+    XIconComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
   providers: [
     provideAnimationsAsync()

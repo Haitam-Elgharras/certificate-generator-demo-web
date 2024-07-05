@@ -12,8 +12,9 @@ import { Router } from '@angular/router';
 })
 export class CandidateTableComponent {
   candidates: Candidate[] = [];
-  selectedCandidateName: string = '';
+  selectedCandidate: Candidate | null = null;
   showTemplatePopup: boolean = false;
+  showViewDetailsPopup: boolean = false;
 
   constructor(private candidateService: CandidateService, private router: Router) {}
 
@@ -31,7 +32,7 @@ export class CandidateTableComponent {
   printCandidate(id: number) {
     const candidate = this.candidates.find(c => c.id === id);
     if (candidate) {
-      this.selectedCandidateName = candidate.name;
+      this.selectedCandidate = candidate;
       setTimeout(() => this.downloadPDF(), 100); // Wait for view to update
     }
   }
@@ -55,7 +56,7 @@ export class CandidateTableComponent {
   
       pdf.addImage(imageData, 'PNG', 0, 0, imgWidth, imgHeight);
   
-      pdf.save(this.selectedCandidateName + '-certificate.pdf');
+      pdf.save(this.selectedCandidate?.name + '-certificate.pdf');
     });
   }
 
@@ -75,8 +76,10 @@ export class CandidateTableComponent {
     });
   }
 
-  viewDetails(id: number) {
-    console.log('View details of candidate with id:', id);
+  viewDetails(candidate: Candidate) {
+    // show the details popup
+    this.showViewDetailsPopup = true;
+    this.selectedCandidate = candidate;
   }
 
   addTemplate() {
