@@ -1,0 +1,29 @@
+<div class="container" style="margin-bottom: 50px;">
+  <h1>Candidate Table</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let candidate of candidates">
+        <td>{{ candidate.id }}</td>
+        <td>{{ candidate.name }}</td>
+        <td>
+          <button class="update" (click)="updateCandidate(candidate.id)">Update</button>
+          <button class="delete" (click)="deleteCandidate(candidate.id)">Delete</button>
+          <button class="view" (click)="viewDetails(candidate.id)">View Details</button>
+          <button class="print" (click)="printCandidate(candidate.id)">Print</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <button (click)="showTemplatePopup = true" class="update">Select Template</button>
+  <button class="add" (click)="addTemplate()">Add New Template</button>
+  <app-template-popup *ngIf="showTemplatePopup" (closePopup)="showTemplatePopup = false"></app-template-popup>
+</div>
+
+<app-certificate-template1 [candidateName]="selectedCandidateName"></app-certificate-template1>
