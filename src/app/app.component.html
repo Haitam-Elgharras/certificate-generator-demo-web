@@ -9,11 +9,13 @@
   </svg>
 </button>
 
+
 <aside id="default-sidebar"
   class="fixed top-0 left-0 z-40 pt-5 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0"
   aria-label="Sidebar">
   <div class="h-full px-3 py-4 ms-2 overflow-y-auto bg-blue-50 dark:bg-blue-800 pt-10 rounded-lg">
-    <ul class="space-y-2 font-medium">
+    <img src="../assets/ntt_logo.svg" alt="Logo" class="w-auto h-[80px] absolute top-4 start-3" />
+    <ul class="space-y-2 font-medium mt-6">
       <li>
         <div
         class="flex items-center p-2 text-blue-900 rounded-lg dark:text-white hover:bg-blue-100 dark:hover:bg-blue-700 group cursor-pointer">          <svg
@@ -36,7 +38,7 @@
               d="m6.072 10.072 2 2 6-4m3.586 4.314.9-.9a2 2 0 0 0 0-2.828l-.9-.9a2 2 0 0 1-.586-1.414V5.072a2 2 0 0 0-2-2H13.8a2 2 0 0 1-1.414-.586l-.9-.9a2 2 0 0 0-2.828 0l-.9.9a2 2 0 0 1-1.414.586H5.072a2 2 0 0 0-2 2v1.272a2 2 0 0 1-.586 1.414l-.9.9a2 2 0 0 0 0 2.828l.9.9a2 2 0 0 1 .586 1.414v1.272a2 2 0 0 0 2 2h1.272a2 2 0 0 1 1.414.586l.9.9a2 2 0 0 0 2.828 0l.9-.9a2 2 0 0 1 1.414-.586h1.272a2 2 0 0 0 2-2V13.8a2 2 0 0 1 .586-1.414Z" />
           </svg>
           <span class="flex-1 ms-3 whitespace-nowrap"
-          (click)="navigateTo('certificates')"
+          (click)="navigateTo('templates')"
           >Certificates</span>
         </div>
       </li>

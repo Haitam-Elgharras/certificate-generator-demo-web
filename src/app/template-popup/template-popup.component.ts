@@ -2,6 +2,7 @@ import { Component, EventEmitter, Output } from '@angular/core';
 import { CertificateTemplate } from '../models/certificateTemplate.model';
 import { CertificateTemplateService } from '../services/certificate-template.service';
 import { Router } from '@angular/router';
+import { AppStateService } from '../services/app-state.service';
 
 
 @Component({
@@ -12,11 +13,7 @@ import { Router } from '@angular/router';
 export class TemplatePopupComponent {
   @Output() closePopup = new EventEmitter<void>();
 
-  constructor(private certificateService: CertificateTemplateService, private router: Router) {}
-
-  templates: CertificateTemplate[] = [];
-
-  selectedTemplate: CertificateTemplate | null = null;
+  constructor(private certificateService: CertificateTemplateService, private router: Router, public appState: AppStateService) {}
 
   previewUrl: string = '';
 
@@ -27,23 +24,14 @@ export class TemplatePopupComponent {
     window.open(this.previewUrl, '_blank');
   }
 
-  ngOnInit() {
-    this.certificateService.getCertificateTemplates().subscribe({
-      next: (templates) => {
-        this.templates = templates;
-      },
-      error: (error) => {
-        console.error('Error fetching templates:', error);
-      },
-    });
-  }
-
   deleteTemplate(id: number) {
+    let templates = this.appState.templates;
+
     // store the deleted template in a variable
-    const deletedTemplate = this.templates.find((template) => template.id === id);
+    const deletedTemplate = templates.find((template) => template.id === id);
 
     // remove the template from the list
-    this.templates = this.templates.filter((template) => template.id !== id);
+    this.appState.templates = templates.filter((template) => template.id !== id);
 
     // send delete request to the server
     this.certificateService.deleteCertificateTemplate(id).subscribe({
@@ -53,13 +41,13 @@ export class TemplatePopupComponent {
       error: (error) => {
         // if the delete request fails, add the template back to the list
         if(deletedTemplate)
-          this.templates.push(deletedTemplate);
+          this.appState.templates.push(deletedTemplate);
       },
     });
   }
 
   selectTemplate(template: CertificateTemplate) {
-    this.selectedTemplate = template;
+    this.appState.setSelectedTemplate(template);
     this.closePopup.emit();
   }
 

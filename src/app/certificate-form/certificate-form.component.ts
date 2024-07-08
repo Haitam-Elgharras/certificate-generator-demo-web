@@ -3,6 +3,7 @@ import { CertificateTemplateService } from '../services/certificate-template.ser
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { CertificateTemplate } from '../models/certificateTemplate.model';
 import { Router } from '@angular/router';
+import { AppStateService } from '../services/app-state.service';
 
 @Component({
   selector: 'app-certificate-form',
@@ -15,18 +16,18 @@ export class CertificateFormComponent {
   templates: CertificateTemplate[] = [];
   selectedFile: File | null = null;
 
-  constructor(private certificateService: CertificateTemplateService, private fb: FormBuilder, private router: Router) {}
+  constructor(private certificateService: CertificateTemplateService, private fb: FormBuilder, private router: Router, private appState: AppStateService) {}
 
   ngOnInit() {
-    this.certificateService.getCertificateTemplates()
-    .subscribe({
-      next: (templates) => {
-        this.templates = templates;
-      },
-      error: (error) => {
-        console.error('Error fetching templates:', error);
-      }
-    });
+    // this.certificateService.getCertificateTemplates()
+    // .subscribe({
+    //   next: (templates) => {
+    //     this.appState.setTemplates(templates);
+    //   },
+    //   error: (error) => {
+    //     console.error('Error fetching templates:', error);
+    //   }
+    // });
 
     this.certificateForm = this.fb.group({
       name: [''],
@@ -47,7 +48,7 @@ export class CertificateFormComponent {
       .subscribe({
         next: (response) => {
           // navigate to the candidate table with the list of certificates opened
-          this.router.navigate(['/candidates']);
+          this.router.navigate(['/templates']);
         },
         error: (error) => {
           console.error('Error creating certificate template:', error);
