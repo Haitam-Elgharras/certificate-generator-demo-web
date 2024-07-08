@@ -14,6 +14,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PdfToImageComponent } from './pdf-to-image/pdf-to-image.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { XIconComponent } from './components/x-icon/x-icon.component';
+import { CertificateTableComponent } from './certificate-table/certificate-table.component';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { XIconComponent } from './components/x-icon/x-icon.component';
     CertificateFormComponent,
     PdfToImageComponent,
     XIconComponent,
+    CertificateTableComponent,
   ],
   imports: [
     BrowserModule,
