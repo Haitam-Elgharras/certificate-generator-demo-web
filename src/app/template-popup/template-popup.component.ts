@@ -3,6 +3,7 @@ import { CertificateTemplate } from '../models/certificateTemplate.model';
 import { CertificateTemplateService } from '../services/certificate-template.service';
 import { Router } from '@angular/router';
 
+
 @Component({
   selector: 'app-template-popup',
   templateUrl: './template-popup.component.html',

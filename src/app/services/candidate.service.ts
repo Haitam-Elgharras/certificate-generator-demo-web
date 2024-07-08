@@ -24,8 +24,8 @@ export class CandidateService {
     return this.http.post(this.baseUrl , candidate);
   }
 
-  updateCandidate(candidate: Candidate) {
-    return this.http.put(this.baseUrl, candidate);
+  updateCandidate(id: number, candidate: Candidate) {
+    return this.http.put(this.baseUrl + '/' + id, candidate);
   }
 
   deleteCandidate(id: number) {

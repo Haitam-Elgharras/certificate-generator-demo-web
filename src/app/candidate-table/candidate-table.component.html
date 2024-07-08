@@ -73,7 +73,7 @@
                 <td class="px-6 py-4 flex space-x-2">
                   <button 
                   class="bg-gray-200 text-gray-700 px-4 py-1 rounded-md hover:bg-gray-300 transition-colors"
-                   (click)="updateCandidate(candidate.id)">Update</button>
+                   (click)="updateCandidateDetails(candidate)">Update</button>
                   <button 
                   class="bg-red-200 text-gray-700 px-4 py-1 rounded-md hover:bg-red-300 transition-colors"
                    (click)="deleteCandidate(candidate.id)">Delete</button>
@@ -104,7 +104,6 @@
         <h2 class="text-2xl font-bold">Candidate Details</h2>
         <Button variant="danger" size="sm" (click)="showViewDetailsPopup = false" >
           <app-x-icon [width]="24" [height]="24" class="h-4 w-4 mr-2"></app-x-icon>
-          Close
         </Button>
       </div>
       <div class="grid grid-cols-2 gap-4">
@@ -123,6 +122,34 @@
           </a>
         </div>
       </div>
+    </div>
+  </div>
+
+  <div *ngIf="showUpdatePopup" class="fixed inset-0 z-40 flex items-center justify-center bg-black/50">
+    <div class="mx-4 w-full max-w-2xl rounded-lg bg-white p-6 text-black md:mx-0">
+      <div class="mb-4 flex items-center justify-between">
+        <h2 class="text-2xl font-bold">Update Candidate Details</h2>
+        <button variant="danger" size="sm" (click)="showUpdatePopup = false">
+          <app-x-icon [width]="24" [height]="24" class="h-4 w-4 mr-2"></app-x-icon>
+        </button>
+      </div>
+      <form [formGroup]="updateCandidateForm" (ngSubmit)="onSubmit()">
+        <div class="flex flex-col gap-4">
+          <div>
+            <label for="name" class="font-bold">Name:</label>
+            <input type="text" id="name" formControlName="name" class="block w-full p-2 border rounded">
+          </div>
+          <div>
+            <label for="score" class="font-bold">Score:</label>
+            <input type="text" id="score" formControlName="score" class="block w-full p-2 border rounded">
+          </div>
+          <div>
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
+              Update Details
+            </button>
+          </div>
+        </div>
+      </form>
     </div>
   </div>
 

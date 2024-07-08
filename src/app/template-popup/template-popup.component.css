@@ -58,7 +58,7 @@ button.preview {
 }
 
 button.close {
-  background-color: #38a169;
+  background-color: red;
   color: white;
   position: sticky;
   bottom: 0;

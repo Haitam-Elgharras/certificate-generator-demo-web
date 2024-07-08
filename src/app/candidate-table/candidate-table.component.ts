@@ -4,6 +4,7 @@ import { CandidateService } from '../services/candidate.service';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 import { Router } from '@angular/router';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-candidate-table',
@@ -12,11 +13,13 @@ import { Router } from '@angular/router';
 })
 export class CandidateTableComponent {
   candidates: Candidate[] = [];
+  updateCandidateForm!: FormGroup;
   selectedCandidate: Candidate | null = null;
   showTemplatePopup: boolean = false;
   showViewDetailsPopup: boolean = false;
+  showUpdatePopup: boolean = false;
 
-  constructor(private candidateService: CandidateService, private router: Router) {}
+  constructor(private candidateService: CandidateService, private router: Router, private fb: FormBuilder) {}
 
   ngOnInit() {
     this.candidateService.getCandidates().subscribe({
@@ -26,6 +29,11 @@ export class CandidateTableComponent {
       error: (error) => {
         console.error('Error fetching candidates:', error);
       }
+    });
+
+    this.updateCandidateForm = this.fb.group({
+      name: [''],
+      score: [''],
     });
   }
 
@@ -61,8 +69,14 @@ export class CandidateTableComponent {
   }
 
   
-  updateCandidate(id: number) {
-    // navigate to the update page
+  updateCandidateDetails(candidate: Candidate) {
+    this.selectedCandidate = candidate;
+    this.showUpdatePopup = true;
+
+    this.updateCandidateForm.setValue({
+      name: candidate.name,
+      score: candidate.score
+    });
   }
 
   deleteCandidate(id: number) {
@@ -74,6 +88,28 @@ export class CandidateTableComponent {
         console.error('Error deleting candidate:', error);
       }
     });
+  }
+
+  onSubmit() {
+    if (this.selectedCandidate) {
+      this.candidateService.updateCandidate(this.selectedCandidate.id, this.updateCandidateForm.value)
+      .subscribe({
+        next: (response) => {
+          console.log('Candidate updated:', response);
+          this.showUpdatePopup = false;
+
+          // Update the candidate in the list
+          const updatedCandidate = this.candidates.find(c => c.id === this.selectedCandidate?.id);
+          if (updatedCandidate) {
+            updatedCandidate.name = this.updateCandidateForm.value.name;
+            updatedCandidate.score = this.updateCandidateForm.value.score;
+          }
+        },
+        error: (error) => {
+          console.error('Error updating candidate:', error);
+        }
+      });
+    }
   }
 
   viewDetails(candidate: Candidate) {
