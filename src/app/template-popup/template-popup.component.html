@@ -2,9 +2,9 @@
   <div class="flex justify-between">
     <h2 class="pb-4 font-semibold">Select Template</h2>
     <app-x-icon [width]="24" [height]="24" class="h-4 w-4 mr-2 cursor-pointer" (click)="closePopup.emit()"></app-x-icon>
-  </div> <div class="template-list">
+  </div> 
+  <div class="template-list">
     <div *ngFor="let template of appState.templates" class="template-item">
-      <!-- Updated img tag below -->
       <!-- <img [src]="'http://localhost:8084/certificates/file/' + template.id" alt="{{ template.name }}"> -->
       <pdf-viewer [src]="'http://localhost:8084/certificates/file/' + template.id" 
       [render-text]="true" [render-text]="true"
