@@ -13,7 +13,6 @@ import { AppStateService } from '../services/app-state.service';
   styleUrls: ['./candidate-table.component.css']
 })
 export class CandidateTableComponent {
-
   candidates: Candidate[] = [];
   updateCandidateForm!: FormGroup;
   addCandidateForm!: FormGroup;
@@ -24,21 +23,13 @@ export class CandidateTableComponent {
   showPreviewPopup: boolean = false;
   showAddPopup: boolean = false;
   previewUrl: string = '';
+  keyword: any;
 
   constructor(private candidateService: CandidateService, private router: Router, private fb: FormBuilder, private certificateTemplateService: CertificateTemplateService, private appState: AppStateService) {}
 
   ngOnInit() {
-    // load the candidates
-    this.candidateService.getCandidates().subscribe({
-      next: (res) => {
-        this.candidates = res.body as Array<Candidate>;
-        console.log('Candidates:', this.candidates);
-      },
-      error: (error) => {
-        console.error('Error fetching candidates:', error);
-      }
-    });
-
+    console.log('Candidate Table Component Initialized');
+    this.loadCandidates();
     // load the certificate templates
     this.certificateTemplateService.getCertificateTemplates().subscribe({
       next: (templates) => {
@@ -61,6 +52,45 @@ export class CandidateTableComponent {
     });
   }
 
+  onSearch() {
+    this.appState.candidateState.keyword = this.keyword;
+    this.loadCandidates();
+  }
+
+  loadCandidates() {
+    let {keyword, currentPage, pageSize} = this.appState.candidateState;
+    console.log('Loading candidates:', keyword, currentPage, pageSize);
+
+    this.candidateService.getCandidates(keyword,currentPage - 1 ,pageSize).subscribe({
+      next: (res) => {
+        this.appState.setCandidateState({
+          candidates: res.content as Array<Candidate>,
+          totalCandidates: res.totalElements,
+          totalPages: res.totalPages,
+          status: "success"
+        });
+
+          // TODO: use the state management service to store the candidates
+          this.candidates = this.appState.candidateState.candidates;
+        
+      },
+      error: (error) => {
+        this.appState.setCandidateState({
+          status: "error",
+          error: error
+        });
+        console.error('Error fetching candidates:', error);
+      }
+    });
+  }
+
+
+  onPageChange(page: number): void {
+    this.appState.candidateState.currentPage = page;
+
+    this.loadCandidates();
+  }
+
   printCandidate(id: number) {
     const candidate = this.candidates.find(c => c.id === id);
     if (candidate) {
@@ -78,7 +108,7 @@ export class CandidateTableComponent {
     this.candidateService.createCandidate(this.addCandidateForm.value).subscribe({
       next: (res) => {
         console.log('Candidate added:', res);
-        this.candidates.push(res as Candidate);
+        this.loadCandidates();
         this.showAddPopup = false;
       },
       error: (error) => {
@@ -100,7 +130,7 @@ export class CandidateTableComponent {
   deleteCandidate(id: number) {
     this.candidateService.deleteCandidate(id).subscribe({
       next: () => {
-        this.candidates = this.candidates.filter(c => c.id !== id);
+        this.loadCandidates();
       },
       error: (error) => {
         console.error('Error deleting candidate:', error);

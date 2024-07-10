@@ -15,6 +15,7 @@ import { PdfToImageComponent } from './pdf-to-image/pdf-to-image.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { XIconComponent } from './components/x-icon/x-icon.component';
 import { CertificateTableComponent } from './certificate-table/certificate-table.component';
+import { PaginationComponent } from './pagination/pagination.component';
 
 @NgModule({
   declarations: [
@@ -26,6 +27,7 @@ import { CertificateTableComponent } from './certificate-table/certificate-table
     PdfToImageComponent,
     XIconComponent,
     CertificateTableComponent,
+    PaginationComponent,
   ],
   imports: [
     BrowserModule,
