@@ -12,8 +12,12 @@ export class CandidateService {
 
   constructor(private http: HttpClient) { }
 
+  // getCandidates(name: string ="", page: number = 1, size: number = 2) {
+  //   return this.http.get<Candidate[]>(this.baseUrl + `/search?name=${name}&page=${page}&size=${size}`, {observe: 'response'});
+  // }
+
   getCandidates() {
-    return this.http.get<Candidate[]>(this.baseUrl);
+    return this.http.get(this.baseUrl, {observe: 'response'});
   }
 
   getCandidateById(id: number) {

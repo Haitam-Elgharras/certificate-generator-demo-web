@@ -16,11 +16,13 @@ export class CandidateTableComponent {
 
   candidates: Candidate[] = [];
   updateCandidateForm!: FormGroup;
+  addCandidateForm!: FormGroup;
   selectedCandidate: Candidate | null = null;
   showTemplatePopup: boolean = false;
   showViewDetailsPopup: boolean = false;
   showUpdatePopup: boolean = false;
   showPreviewPopup: boolean = false;
+  showAddPopup: boolean = false;
   previewUrl: string = '';
 
   constructor(private candidateService: CandidateService, private router: Router, private fb: FormBuilder, private certificateTemplateService: CertificateTemplateService, private appState: AppStateService) {}
@@ -28,8 +30,8 @@ export class CandidateTableComponent {
   ngOnInit() {
     // load the candidates
     this.candidateService.getCandidates().subscribe({
-      next: (candidates) => {
-        this.candidates = candidates;
+      next: (res) => {
+        this.candidates = res.body as Array<Candidate>;
         console.log('Candidates:', this.candidates);
       },
       error: (error) => {
@@ -51,6 +53,12 @@ export class CandidateTableComponent {
       name: [''],
       score: [''],
     });
+
+    this.addCandidateForm = this.fb.group({
+      name: [''],
+      score: [''],
+      dateNaissance: [''],
+    });
   }
 
   printCandidate(id: number) {
@@ -63,6 +71,20 @@ export class CandidateTableComponent {
     } else {
       console.error('Candidate not found for ID:', id);
     }
+  }
+
+  onAddCandidate() {
+    // get the values from the form
+    this.candidateService.createCandidate(this.addCandidateForm.value).subscribe({
+      next: (res) => {
+        console.log('Candidate added:', res);
+        this.candidates.push(res as Candidate);
+        this.showAddPopup = false;
+      },
+      error: (error) => {
+        console.error('Error adding candidate:', error);
+      }
+    });
   }
   
   updateCandidateDetails(candidate: Candidate) {
