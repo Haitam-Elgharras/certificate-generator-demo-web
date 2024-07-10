@@ -10,7 +10,7 @@ import { AppStateService } from '../services/app-state.service';
 @Component({
   selector: 'app-candidate-table',
   templateUrl: './candidate-table.component.html',
-  styleUrls: ['./candidate-table.component.css']
+  styleUrls: ['./candidate-table.component.css'],
 })
 export class CandidateTableComponent {
   candidates: Candidate[] = [];
@@ -24,8 +24,15 @@ export class CandidateTableComponent {
   showAddPopup: boolean = false;
   previewUrl: string = '';
   keyword: any;
+  checkedCandidates: number[] = [];
 
-  constructor(private candidateService: CandidateService, private router: Router, private fb: FormBuilder, private certificateTemplateService: CertificateTemplateService, private appState: AppStateService) {}
+  constructor(
+    private candidateService: CandidateService,
+    private router: Router,
+    private fb: FormBuilder,
+    private certificateTemplateService: CertificateTemplateService,
+    private appState: AppStateService
+  ) {}
 
   ngOnInit() {
     console.log('Candidate Table Component Initialized');
@@ -57,33 +64,41 @@ export class CandidateTableComponent {
     this.loadCandidates();
   }
 
+  onSelectCandidate(id: number) {
+    if (this.checkedCandidates.includes(id))
+      this.uncheckedCandidate(id);
+    else this.checkedCandidates.push(id);
+
+    console.log(this.checkedCandidates);
+  }
+
   loadCandidates() {
-    let {keyword, currentPage, pageSize} = this.appState.candidateState;
+    let { keyword, currentPage, pageSize } = this.appState.candidateState;
     console.log('Loading candidates:', keyword, currentPage, pageSize);
 
-    this.candidateService.getCandidates(keyword,currentPage - 1 ,pageSize).subscribe({
-      next: (res) => {
-        this.appState.setCandidateState({
-          candidates: res.content as Array<Candidate>,
-          totalCandidates: res.totalElements,
-          totalPages: res.totalPages,
-          status: "success"
-        });
+    this.candidateService
+      .getCandidates(keyword, currentPage - 1, pageSize)
+      .subscribe({
+        next: (res) => {
+          this.appState.setCandidateState({
+            candidates: res.content as Array<Candidate>,
+            totalCandidates: res.totalElements,
+            totalPages: res.totalPages,
+            status: 'success',
+          });
 
           // TODO: use the state management service to store the candidates
           this.candidates = this.appState.candidateState.candidates;
-        
-      },
-      error: (error) => {
-        this.appState.setCandidateState({
-          status: "error",
-          error: error
-        });
-        console.error('Error fetching candidates:', error);
-      }
-    });
+        },
+        error: (error) => {
+          this.appState.setCandidateState({
+            status: 'error',
+            error: error,
+          });
+          console.error('Error fetching candidates:', error);
+        },
+      });
   }
-
 
   onPageChange(page: number): void {
     this.appState.candidateState.currentPage = page;
@@ -92,11 +107,11 @@ export class CandidateTableComponent {
   }
 
   printCandidate(id: number) {
-    const candidate = this.candidates.find(c => c.id === id);
+    const candidate = this.candidates.find((c) => c.id === id);
     if (candidate) {
       this.selectedCandidate = candidate;
       console.log('Selected Candidate:', this.selectedCandidate); // Log the selected candidate
-      
+
       this.downloadPDF();
     } else {
       console.error('Candidate not found for ID:', id);
@@ -105,25 +120,27 @@ export class CandidateTableComponent {
 
   onAddCandidate() {
     // get the values from the form
-    this.candidateService.createCandidate(this.addCandidateForm.value).subscribe({
-      next: (res) => {
-        console.log('Candidate added:', res);
-        this.loadCandidates();
-        this.showAddPopup = false;
-      },
-      error: (error) => {
-        console.error('Error adding candidate:', error);
-      }
-    });
+    this.candidateService
+      .createCandidate(this.addCandidateForm.value)
+      .subscribe({
+        next: (res) => {
+          console.log('Candidate added:', res);
+          this.loadCandidates();
+          this.showAddPopup = false;
+        },
+        error: (error) => {
+          console.error('Error adding candidate:', error);
+        },
+      });
   }
-  
+
   updateCandidateDetails(candidate: Candidate) {
     this.selectedCandidate = candidate;
     this.showUpdatePopup = true;
 
     this.updateCandidateForm.setValue({
       name: candidate.name,
-      score: candidate.score
+      score: candidate.score,
     });
   }
 
@@ -131,32 +148,43 @@ export class CandidateTableComponent {
     this.candidateService.deleteCandidate(id).subscribe({
       next: () => {
         this.loadCandidates();
+        this.uncheckedCandidate(id);
       },
       error: (error) => {
         console.error('Error deleting candidate:', error);
-      }
+      },
     });
+  }
+
+  uncheckedCandidate(id: number) {
+    this.checkedCandidates = this.checkedCandidates.filter((c) => c !== id);
   }
 
   onSubmit() {
     if (this.selectedCandidate) {
-      this.candidateService.updateCandidate(this.selectedCandidate.id, this.updateCandidateForm.value)
-      .subscribe({
-        next: (response) => {
-          console.log('Candidate updated:', response);
-          this.showUpdatePopup = false;
+      this.candidateService
+        .updateCandidate(
+          this.selectedCandidate.id,
+          this.updateCandidateForm.value
+        )
+        .subscribe({
+          next: (response) => {
+            console.log('Candidate updated:', response);
+            this.showUpdatePopup = false;
 
-          // Update the candidate in the list
-          const updatedCandidate = this.candidates.find(c => c.id === this.selectedCandidate?.id);
-          if (updatedCandidate) {
-            updatedCandidate.name = this.updateCandidateForm.value.name;
-            updatedCandidate.score = this.updateCandidateForm.value.score;
-          }
-        },
-        error: (error) => {
-          console.error('Error updating candidate:', error);
-        }
-      });
+            // Update the candidate in the list
+            const updatedCandidate = this.candidates.find(
+              (c) => c.id === this.selectedCandidate?.id
+            );
+            if (updatedCandidate) {
+              updatedCandidate.name = this.updateCandidateForm.value.name;
+              updatedCandidate.score = this.updateCandidateForm.value.score;
+            }
+          },
+          error: (error) => {
+            console.error('Error updating candidate:', error);
+          },
+        });
     }
   }
 
@@ -177,29 +205,51 @@ export class CandidateTableComponent {
     this.showPreviewPopup = true;
   }
 
+  async onPrintSelected() {
+    for (const id of this.checkedCandidates) {
+      const candidate = this.candidates.find(c => c.id === id);
+      if (candidate) {
+        this.selectedCandidate = candidate;
+        await this.downloadPDF();
+      } else {
+        console.error('Candidate not found for ID:', id);
+      }
+    }
+  }
+  onDeleteSelected() {
+    this.checkedCandidates.forEach((id) => {
+      this.deleteCandidate(id);
+    });
+  }
 
   async previewCertificateUrl(): Promise<any> {
     if (this.selectedCandidate) {
       try {
-        let templateId = this.appState.getSelectedTemplate()?.id || this.appState.templates[0].id;
+        let templateId =
+          this.appState.getSelectedTemplate()?.id ||
+          this.appState.templates[0].id;
 
-        if (!templateId)
-          throw new Error('No certificate template selected.');
+        if (!templateId) throw new Error('No certificate template selected.');
 
         // Load the certificate template
-        const blob = await this.certificateTemplateService.loadCertificateTemplate(templateId).toPromise();
-        
+        const blob = await this.certificateTemplateService
+          .loadCertificateTemplate(templateId)
+          .toPromise();
+
         if (!blob) {
           throw new Error('Failed to load certificate template.');
         }
-  
+
         // Load the PDF document from the blob
         const arrayBuffer = await blob.arrayBuffer();
         const pdfDoc = await PDFDocument.load(arrayBuffer);
-  
+
         // Log the candidate details being used for the PDF
-        console.log('Modifying PDF for Candidate:', this.selectedCandidate.name);
-  
+        console.log(
+          'Modifying PDF for Candidate:',
+          this.selectedCandidate.name
+        );
+
         // Example of modifying the PDF document
         const pages = pdfDoc.getPages();
         if (pages.length === 0) {
@@ -207,34 +257,33 @@ export class CandidateTableComponent {
         }
         const firstPage = pages[0];
         const { width, height } = firstPage.getSize();
-  
+
         // Estimate the width of the text
         const text = this.selectedCandidate.name || 'Default Name';
         const fontSize = 25;
         const textWidth = fontSize * text.length * 0.6; // Estimate text width (0.6 is an approximation factor)
-  
+
         // Calculate coordinates to center the text
         const x = (width - textWidth) / 2;
         const y = height / 2 - 50;
-  
+
         firstPage.drawText(text, {
           x,
           y,
           size: fontSize,
           color: rgb(0, 0, 0), // Set the text color to black
         });
-  
+
         // Serialize the PDFDocument to bytes
         const pdfBytes = await pdfDoc.save();
-  
+
         // Create a blob from the PDF bytes and trigger a download
         const downloadBlob = new Blob([pdfBytes], { type: 'application/pdf' });
         const pdfUrl = URL.createObjectURL(downloadBlob);
-       
+
         this.previewUrl = pdfUrl;
 
         console.log(this.previewUrl || 'No URL found');
-
       } catch (error) {
         console.error('Error downloading PDF:', error);
       }
@@ -246,25 +295,31 @@ export class CandidateTableComponent {
   async downloadPDF() {
     if (this.selectedCandidate) {
       try {
-        let templateId = this.appState.getSelectedTemplate()?.id || this.appState.templates[0].id;
+        let templateId =
+          this.appState.getSelectedTemplate()?.id ||
+          this.appState.templates[0].id;
 
-        if (!templateId)
-          throw new Error('No certificate template selected.');
+        if (!templateId) throw new Error('No certificate template selected.');
 
         // Load the certificate template
-        const blob = await this.certificateTemplateService.loadCertificateTemplate(templateId).toPromise();
-        
+        const blob = await this.certificateTemplateService
+          .loadCertificateTemplate(templateId)
+          .toPromise();
+
         if (!blob) {
           throw new Error('Failed to load certificate template.');
         }
-  
+
         // Load the PDF document from the blob
         const arrayBuffer = await blob.arrayBuffer();
         const pdfDoc = await PDFDocument.load(arrayBuffer);
-  
+
         // Log the candidate details being used for the PDF
-        console.log('Modifying PDF for Candidate:', this.selectedCandidate.name);
-  
+        console.log(
+          'Modifying PDF for Candidate:',
+          this.selectedCandidate.name
+        );
+
         // Example of modifying the PDF document
         const pages = pdfDoc.getPages();
         if (pages.length === 0) {
@@ -272,48 +327,52 @@ export class CandidateTableComponent {
         }
         const firstPage = pages[0];
         const { width, height } = firstPage.getSize();
-  
+
         // Estimate the width of the text
         const text = this.selectedCandidate.name || 'Default Name';
         const fontSize = 25;
         const textWidth = fontSize * text.length * 0.6; // Estimate text width (0.6 is an approximation factor)
-  
+
         // Calculate coordinates to center the text
         const x = (width - textWidth) / 2;
         const y = height / 2 - 50;
-  
+
         firstPage.drawText(text, {
           x,
           y,
           size: fontSize,
           color: rgb(0, 0, 0), // Set the text color to black
         });
-  
+
         // Serialize the PDFDocument to bytes
         const pdfBytes = await pdfDoc.save();
-  
+
         // Create a blob from the PDF bytes and trigger a download
         const downloadBlob = new Blob([pdfBytes], { type: 'application/pdf' });
         const link = document.createElement('a');
         link.href = URL.createObjectURL(downloadBlob);
-        link.download = `${this.selectedCandidate.name.replace(' ', '_')}_Certificate.pdf`;
+        link.download = `${this.selectedCandidate.name.replace(
+          ' ',
+          '_'
+        )}_Certificate.pdf`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-  
+
         console.log('PDF download triggered successfully.');
 
         this.selectedCandidate.certificatePrinted = true;
         console.log('Updating candidate:', this.selectedCandidate);
-        this.candidateService.updateCandidate(this.selectedCandidate.id, this.selectedCandidate)
-        .subscribe({
-          next: (response) => {
-            console.log('Candidate updated:', response);
-          },
-          error: (error) => {
-            console.error('Error updating candidate:', error);
-          }
-        });
+        this.candidateService
+          .updateCandidate(this.selectedCandidate.id, this.selectedCandidate)
+          .subscribe({
+            next: (response) => {
+              console.log('Candidate updated:', response);
+            },
+            error: (error) => {
+              console.error('Error updating candidate:', error);
+            },
+          });
       } catch (error) {
         console.error('Error downloading PDF:', error);
       }

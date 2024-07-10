@@ -36,20 +36,21 @@
           aria-labelledby="dropdownActionButton"
         >
           <li>
-            <a
-              href="#"
-              class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-              >Print All</a
-            >
+            <div>
+            <button
+              class="block text-start w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+              (click)="onPrintSelected()"
+              >Print selected
+            </button>
+          </div>
           </li>
           <li>
-            <button class="block">
-              <a
-                href="#"
-                class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                >Add Candidate</a
-              >
-            </button>
+            <div>
+              <button
+                class="block text-start w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                >Add Candidate
+              </button>
+            </div>
           </li>
           <li>
             <a
@@ -59,22 +60,17 @@
             >
           </li>
         </ul>
-        <div class="py-1">
-          <a
-            href="#"
-            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-            >Delete All</a
-          >
+        <div>
+          <button
+            class="block text-start w-full border-none px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+            (click)="onDeleteSelected()"
+            >Delete selected
+          </button>
         </div>
       </div>
     </div>
     <div class="flex justify-center items-center gap-3">
-      <button class="bg-blue-500 text-white px-1 py-1 rounded-lg hover:bg-blue-600 transition-colors"
-      (click)="showAddPopup = true"
       
-      >
-        Add Candidate
-      </button>
       <label for="table-search" class="sr-only">Search</label>
       <div class="relative">
         <div
@@ -133,7 +129,8 @@
               id="checkbox-table-search-1"
               type="checkbox"
               class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-            />
+              (change)="onSelectCandidate(candidate.id)"
+              />
             <label for="checkbox-table-search-1" class="sr-only"
               >checkbox</label
             >
@@ -244,13 +241,23 @@
 
 </div>
 
-<button
-  (click)="showTemplatePopup = true"
-  class="text-center bg-blue-500 text-white px-2 py-2 rounded-lg mx-4 mt-4 hover:bg-blue-600 transition-colors"
->
-  Select Template
-</button>
-<button class="add" (click)="addTemplate()">Add New Template</button>
+<div class="flex gap-4 mt-4">
+  <button
+    (click)="showTemplatePopup = true"
+    class="text-center bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-600 transition-colors"
+  >
+    Select Template
+  </button>
+  <button class="bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-600 transition-colors"
+        (click)="showAddPopup = true"
+  
+        >
+          Add Candidate
+        </button>
+  <button class="add bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-600 transition-colors" (click)="addTemplate()">Add New Template</button>
+</div>
+
+
 <app-template-popup
   *ngIf="showTemplatePopup"
   (closePopup)="showTemplatePopup = false"
